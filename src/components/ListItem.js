@@ -1,6 +1,7 @@
 import React from 'react'
+import Button from './Button'
 
-const ListItem = ({ children, product }) => {
+const ListItem = ({ product, ...props }) => {
     return (
         <div className="columns is-multiline is-centered">
             <div className="card column is-one-third">
@@ -11,7 +12,9 @@ const ListItem = ({ children, product }) => {
                         </div>
                     </div>
                     <div className="content">{product.category}</div>
-                    {children}
+                    <Button {...props} className="button is-dark is-pulled-right">
+                        Excluir
+                    </Button>
                 </div>
             </div>
         </div>

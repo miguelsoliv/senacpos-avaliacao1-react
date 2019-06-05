@@ -6,5 +6,5 @@ export default () => {
     { id: 4, name: 'Açougue' }
   ]))
 
-  window.localStorage.getItem('items') || window.localStorage.setItem('items', '[]')
+  window.localStorage.getItem('products') || window.localStorage.setItem('products', '[]')
 }

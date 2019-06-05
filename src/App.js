@@ -5,6 +5,7 @@ import ListItem from './components/ListItem'
 import Button from './components/Button'
 import Select from './components/Select'
 import { getCategories } from './services/categories'
+import { getProducts, addProduct, deleteProduct } from './services/products'
 
 class App extends React.Component {
   state = {
@@ -19,13 +20,16 @@ class App extends React.Component {
       category: result[0].name,
       categories: result
     }))
+
+    getProducts().then(result => this.setState({
+      list: result
+    }))
   }
 
   render() {
     const { product, category, list, categories } = this.state
-    console.log(category)
     return (
-      <div>
+      <React.Fragment>
         <section className="section">
           <div className="container">
             <Form onSubmit={this.handleSubmit}>
@@ -50,17 +54,15 @@ class App extends React.Component {
         <section className="section">
           {
             list.map((product, index) =>
-              <ListItem product={product} key={index}>
-                <Button
-                  onClick={() => this.deleteProduct(index)}
-                  className="button is-dark is-pulled-right"
-                >
-                  Excluir
-                </Button>
-              </ListItem>)
+              <ListItem
+                product={product}
+                key={index}
+                onClick={() => this.deleteProductFromList(product.id)}>
+              </ListItem>
+            )
           }
         </section>
-      </div>
+      </React.Fragment>
     );
   }
 
@@ -78,26 +80,27 @@ class App extends React.Component {
 
   handleSubmit = event => {
     event.preventDefault()
-    if (!this.state.product || !this.state.category) {
+    const { product, category, list, categories } = this.state
+
+    if (!product || !category) {
       return
     }
 
-    const { product, category, list } = this.state
-    list.unshift(
-      {
-        name: product,
-        category: category,
-      })
-    this.setState({
-      list: list,
+    addProduct({
+      name: product,
+      category: category
+    }).then(result => this.setState({
+      list: [result, ...list],
       product: '',
-      category: this.state.categories[Object.keys(this.state.categories)[0]].name
-    })
+      category: categories[Object.keys(categories)[0]].name
+    }))
   }
 
-  deleteProduct = index => {
+  deleteProductFromList = productId => {
+    deleteProduct(productId)
+
     this.setState({
-      list: this.state.list.filter((_, i) => i !== index)
+      list: this.state.list.filter((product) => product.id !== productId)
     })
   }
 }
